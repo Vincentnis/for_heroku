@@ -1,7 +1,6 @@
 # импортируем библиотеки
 from flask import Flask, request
 import logging
-from flask_ngrok import run_with_ngrok
 # библиотека, которая нам понадобится для работы с JSON
 import json
 
@@ -13,7 +12,6 @@ import json
 # если бы такое обращение, например,
 # произошло внутри модуля logging, то мы бы получили 'logging'
 app = Flask(__name__)
-run_with_ngrok(app)
 # Устанавливаем уровень логирования
 logging.basicConfig(level=logging.INFO)
 
