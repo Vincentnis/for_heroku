@@ -1,1 +1,1 @@
-web: gunicorn  alice:app
+web: gunicorn alice:app
