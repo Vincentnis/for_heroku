@@ -14,7 +14,12 @@ import json
 app = Flask(__name__)
 # Устанавливаем уровень логирования
 logging.basicConfig(level=logging.INFO)
-
+rabbit = False
+first_rabbit = False
+first_message = 'Привет! Купи слона!'
+animal = "слона"
+search_animal = 'слон'
+agree_text = 'Слона можно найти на Яндекс.Маркете!'
 # Создадим словарь, чтобы для каждой сессии общения
 # с навыком хранились подсказки, которые видел пользователь.
 # Это поможет нам немного разнообразить подсказки ответов
@@ -33,6 +38,7 @@ sessionStorage = {}
 # Внутри функции доступен request.json - это JSON,
 # который отправила нам Алиса в запросе POST
 def main():
+    global rabbit
     logging.info(f'Request: {request.json!r}')
 
     # Начинаем формировать ответ, согласно документации
@@ -45,19 +51,24 @@ def main():
             'end_session': False
         }
     }
-
+    if rabbit:
+        request.json['session']['new'] = True
+        rabbit = False
     # Отправляем request.json и response в функцию handle_dialog.
     # Она сформирует оставшиеся поля JSON, которые отвечают
     # непосредственно за ведение диалога
     handle_dialog(request.json, response)
 
     logging.info(f'Response:  {response!r}')
+    if response['response']['end_session'] and rabbit:
+        response["response"]["end_session"] = False
 
     # Преобразовываем в JSON и возвращаем
     return json.dumps(response)
 
 
 def handle_dialog(req, res):
+    global rabbit, first_rabbit, first_message, animal, agree_text, search_animal
     user_id = req['session']['user_id']
 
     if req['session']['new']:
@@ -73,7 +84,7 @@ def handle_dialog(req, res):
             ]
         }
         # Заполняем текст ответа
-        res['response']['text'] = 'Привет! Купи слона!'
+        res['response']['text'] = first_message
         # Получим подсказки
         res['response']['buttons'] = get_suggests(user_id)
         return
@@ -95,13 +106,20 @@ def handle_dialog(req, res):
         'я куплю'
     ]:
         # Пользователь согласился, прощаемся.
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
+        res['response']['text'] = agree_text
         res['response']['end_session'] = True
+        if not first_rabbit:
+            rabbit = True
+            first_rabbit = True
+            first_message = 'Привет! Купи кролика!'
+            animal = "кролика"
+            search_animal = 'кролик'
+            agree_text = 'Кролика можно найти на Яндекс.Маркете!'
         return
 
-    # Если нет, то убеждаем его купить слона!
+    # Если нет, то убеждаем его купить слона или кролика!
     res['response']['text'] = \
-        f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
+        f"Все говорят '{req['request']['original_utterance']}', а ты купи {animal}!"
     res['response']['buttons'] = get_suggests(user_id)
 
 
@@ -124,7 +142,7 @@ def get_suggests(user_id):
     if len(suggests) < 2:
         suggests.append({
             "title": "Ладно",
-            "url": "https://market.yandex.ru/search?text=слон",
+            "url": f"https://market.yandex.ru/search?text={search_animal}",
             "hide": True
         })
 
