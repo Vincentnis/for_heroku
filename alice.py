@@ -115,6 +115,11 @@ def handle_dialog(req, res):
             animal = "кролика"
             search_animal = 'кролик'
             agree_text = 'Кролика можно найти на Яндекс.Маркете!'
+        else:
+            first_message = 'Привет! Купи слона!'
+            animal = "слона"
+            search_animal = 'слон'
+            agree_text = 'Слона можно найти на Яндекс.Маркете!'
         return
 
     # Если нет, то убеждаем его купить слона или кролика!
