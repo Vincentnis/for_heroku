@@ -108,11 +108,6 @@ def handle_dialog(req, res):
         # Пользователь согласился, прощаемся.
         res['response']['text'] = agree_text
         res['response']['end_session'] = True
-        if first_rabbit and not rabbit:
-            first_message = 'Привет! Купи слона!'
-            animal = "слона"
-            search_animal = 'слон'
-            agree_text = 'Слона можно найти на Яндекс.Маркете!'
         if not first_rabbit:
             rabbit = True
             first_rabbit = True
