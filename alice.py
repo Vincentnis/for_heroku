@@ -115,7 +115,7 @@ def handle_dialog(req, res):
             animal = "кролика"
             search_animal = 'кролик'
             agree_text = 'Кролика можно найти на Яндекс.Маркете!'
-        else:
+        if first_rabbit and not rabbit:
             first_message = 'Привет! Купи слона!'
             animal = "слона"
             search_animal = 'слон'
