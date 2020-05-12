@@ -129,5 +129,9 @@ def get_suggests(user_id):
     return suggests
 
 
+def main1():
+    app.run(port=8002, host='127.0.0.1')
+
+
 if __name__ == '__main__':
-    app.run()
+    main1()
